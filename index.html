@@ -6,49 +6,8 @@
   <meta name="description" content="PrepMatrix — Sustainable interview preparation command centre powered by SDG-aligned optimization engines." />
   <title>PrepMatrix Command | SDG-Aligned Preparation Engine</title>
 
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            forest:      '#1A3A2B',
-            'forest-lt': '#2D5A42',
-            terracotta:  '#D96B43',
-            sage:        '#F4F6F4',
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Custom design-system overrides -->
+  <!-- Compiled Tailwind CSS & custom design-system tokens -->
   <link rel="stylesheet" href="css/styles.css" />
-  <style>
-    .font-display { font-family: 'Space Grotesk', sans-serif; }
-    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-    .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
-    .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    
-    @keyframes blob {
-      0% { transform: translate(0px, 0px) scale(1); }
-      33% { transform: translate(30px, -50px) scale(1.1); }
-      66% { transform: translate(-20px, 20px) scale(0.9); }
-      100% { transform: translate(0px, 0px) scale(1); }
-    }
-    .animate-blob { animation: blob 7s infinite; }
-    .animation-delay-2000 { animation-delay: 2s; }
-    .animation-delay-4000 { animation-delay: 4s; }
-
-    body.locked { overflow: hidden; }
-    main.no-padding { padding: 0 !important; }
-  </style>
 </head>
 <body class="bg-sage text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen flex flex-col overflow-x-hidden transition-colors duration-300">
 
@@ -242,12 +201,13 @@
           
           <form id="form-login" class="space-y-4" onsubmit="event.preventDefault();">
             <div class="space-y-1">
-              <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Email address" value="student@university.edu" />
+              <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Email (e.g. student@university.edu)" />
             </div>
             
             <div class="space-y-1">
-              <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Password" value="password123" />
+              <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Password (e.g. student123 or admin123)" />
             </div>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 pt-0.5">Demo credentials: <code class="text-emerald-600 dark:text-emerald-400 font-mono">student@university.edu / student123</code> or <code class="text-terracotta font-mono">admin@university.edu / admin123</code></p>
             
             <div class="flex items-center justify-between mt-4 mb-6">
               <label class="flex items-center gap-2 cursor-pointer">
@@ -678,7 +638,10 @@
             <svg class="w-5 h-5 text-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
           </div>
           <div>
-            <h2 class="text-white font-bold text-lg font-display">Institution Command Centre</h2>
+            <div class="flex items-center gap-2">
+              <h2 class="text-white font-bold text-lg font-display">Institution Command Centre</h2>
+              <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full">⚠ Simulated Data</span>
+            </div>
             <p class="text-slate-400 text-xs">Administrator Access · Real-time Cohort Analytics</p>
           </div>
         </div>
@@ -1002,9 +965,12 @@
       <div class="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 text-xs text-gray-500 gap-4">
         <div>
           <p>Credential ID: <strong id="cert-hash" class="font-mono text-slate-800">PM-2026-X89F-72A</strong></p>
-          <p class="text-[11px] text-gray-400">Verified by PrepMatrix Cryptographic Engine</p>
+          <p class="text-[11px] text-gray-400">Verified by PrepMatrix Demo Verification Token (SHA-256)</p>
         </div>
         <div class="no-print flex gap-3">
+          <button id="btn-export-certificate-json" class="px-5 py-2.5 bg-forest hover:bg-forest-lt text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+            <span>📥</span> Export JSON
+          </button>
           <button id="btn-print-certificate" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
             <span>🖨</span> Print / Download PDF
           </button>

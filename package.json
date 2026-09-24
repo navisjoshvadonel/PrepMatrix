@@ -1,0 +1,26 @@
+{
+  "name": "prepmatrix",
+  "version": "1.0.0",
+  "description": "> **Sustainable Interview Preparation Command Centre Powered by UN SDG-Aligned Optimization Engines.**",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./css/input.css -o ./css/styles.css --minify",
+    "watch:css": "tailwindcss -i ./css/input.css -o ./css/styles.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/navisjoshvadonel/PrepMatrix.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/navisjoshvadonel/PrepMatrix/issues"
+  },
+  "homepage": "https://github.com/navisjoshvadonel/PrepMatrix#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

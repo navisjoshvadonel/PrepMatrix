@@ -2,6 +2,7 @@
  * CodeRunnerEngine.js
  * In-browser sandbox code executor and test-case verification engine.
  * Supports evaluating JavaScript solutions against structured test suites.
+ * Protected by Web Worker execution and 3-second timeout guard.
  */
 
 export const CODING_CHALLENGES = {
@@ -78,14 +79,130 @@ export const CODING_CHALLENGES = {
 };
 
 export class CodeRunnerEngine {
-  execute(codeStr, challengeId) {
+  /**
+   * Execute code string against specified challenge test cases.
+   * Runs in Web Worker if available with 3-second hard timeout.
+   * @param {string} codeStr
+   * @param {string} challengeId
+   * @param {number} [timeoutMs=3000]
+   * @returns {Promise<Object>}
+   */
+  async execute(codeStr, challengeId, timeoutMs = 3000) {
     const challenge = CODING_CHALLENGES[challengeId] || CODING_CHALLENGES.twoSum;
-    const results = [];
-    let allPassed = true;
     const startTime = performance.now();
 
+    // Web Worker sandbox with 3s hard timeout
+    if (typeof Worker !== 'undefined' && typeof Blob !== 'undefined') {
+      return new Promise((resolve) => {
+        const workerScript = `
+          self.onmessage = function(e) {
+            const { codeStr, testCases } = e.data;
+            try {
+              const wrappedCode = \`
+                \${codeStr}
+                return (typeof twoSum !== 'undefined' ? twoSum : typeof reverseString !== 'undefined' ? reverseString : isValid);
+              \`;
+              const fn = new Function(wrappedCode)();
+              if (typeof fn !== 'function') {
+                self.postMessage({ success: false, error: 'Could not find entry function. Ensure function name matches problem signature.' });
+                return;
+              }
+              const results = [];
+              let allPassed = true;
+              for (let i = 0; i < testCases.length; i++) {
+                const tc = testCases[i];
+                const inputCopy = JSON.parse(JSON.stringify(tc.input));
+                const t0 = performance.now();
+                const actual = fn(...inputCopy);
+                const elapsed = (performance.now() - t0).toFixed(2);
+                const passed = JSON.stringify(actual) === JSON.stringify(tc.expected);
+                if (!passed) allPassed = false;
+                results.push({
+                  caseNum: i + 1,
+                  passed,
+                  input: JSON.stringify(tc.input),
+                  expected: JSON.stringify(tc.expected),
+                  actual: JSON.stringify(actual),
+                  timeMs: elapsed
+                });
+              }
+              self.postMessage({ success: true, allPassed, results, error: null });
+            } catch (err) {
+              self.postMessage({ success: false, error: err.message });
+            }
+          };
+        `;
+
+        let worker;
+        let workerUrl;
+        try {
+          const blob = new Blob([workerScript], { type: 'application/javascript' });
+          workerUrl = URL.createObjectURL(blob);
+          worker = new Worker(workerUrl);
+        } catch {
+          // If Blob/Worker instantiation blocked, fallback to sync execution
+          return resolve(this._executeSync(codeStr, challenge, startTime));
+        }
+
+        let isDone = false;
+        const timer = setTimeout(() => {
+          if (!isDone) {
+            isDone = true;
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            resolve({
+              success: false,
+              allPassed: false,
+              results: [],
+              totalTimeMs: timeoutMs,
+              error: `Execution timed out (> ${timeoutMs / 1000}s). Check for infinite loops or heavy operations.`
+            });
+          }
+        }, timeoutMs);
+
+        worker.onmessage = (e) => {
+          if (!isDone) {
+            isDone = true;
+            clearTimeout(timer);
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            const totalElapsed = (performance.now() - startTime).toFixed(2);
+            resolve({
+              ...e.data,
+              totalTimeMs: totalElapsed
+            });
+          }
+        };
+
+        worker.onerror = (err) => {
+          if (!isDone) {
+            isDone = true;
+            clearTimeout(timer);
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            resolve({
+              success: false,
+              allPassed: false,
+              results: [],
+              totalTimeMs: (performance.now() - startTime).toFixed(2),
+              error: err.message || 'Sandbox execution error'
+            });
+          }
+        };
+
+        worker.postMessage({ codeStr, testCases: challenge.testCases });
+      });
+    }
+
+    // Direct synchronous fallback
+    return Promise.resolve(this._executeSync(codeStr, challenge, startTime));
+  }
+
+  _executeSync(codeStr, challenge, startTime) {
+    const results = [];
+    let allPassed = true;
+
     try {
-      // Evaluate user code inside isolated scope
       const wrappedCode = `
         ${codeStr}
         return (typeof twoSum !== 'undefined' ? twoSum : typeof reverseString !== 'undefined' ? reverseString : isValid);
