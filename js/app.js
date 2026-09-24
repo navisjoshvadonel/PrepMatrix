@@ -119,27 +119,6 @@ btnThemeToggle?.addEventListener('click', () => {
   sound.playClick();
 });
 
-/* ── Sound Routing ──────────────────────────────────────────── */
-const btnSoundToggle = $('btn-sound-toggle');
-const soundIconOn    = $('sound-icon-on');
-const soundIconOff   = $('sound-icon-off');
-
-function updateSoundUI() {
-  if (sound.isMuted) {
-    soundIconOn?.classList.add('hidden');
-    soundIconOff?.classList.remove('hidden');
-  } else {
-    soundIconOn?.classList.remove('hidden');
-    soundIconOff?.classList.add('hidden');
-  }
-}
-updateSoundUI();
-
-btnSoundToggle?.addEventListener('click', () => {
-  const muted = sound.toggleMute();
-  updateSoundUI();
-  if (!muted) sound.playClick();
-});
 
 /* ── State Routing ──────────────────────────────────────────── */
 function hideAllViews() {
