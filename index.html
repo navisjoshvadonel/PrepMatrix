@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PrepMatrix — Sustainable interview preparation command centre powered by SDG-aligned optimization engines." />
+  <title>PrepMatrix Command | SDG-Aligned Preparation Engine</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            forest:      '#1A3A2B',
+            'forest-lt': '#2D5A42',
+            terracotta:  '#D96B43',
+            sage:        '#F4F6F4',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom design-system overrides -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+    .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    @keyframes blob {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob { animation: blob 7s infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
+
+    body.locked { overflow: hidden; }
+    main.no-padding { padding: 0 !important; }
+  </style>
+</head>
+<body class="bg-sage text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen flex flex-col overflow-x-hidden transition-colors duration-300">
+
+  <!-- HEADER -->
+  <header class="pm-header flex justify-between items-center px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm h-[73px] transition-colors duration-300">
+    <div class="flex items-center gap-2 cursor-pointer" id="logo-link">
+      <h1 class="pm-header__logo text-2xl font-bold tracking-tight text-forest dark:text-white font-display">Prep<span class="text-emerald-500">Matrix</span></h1>
+    </div>
+    <div class="flex items-center gap-4 sm:gap-6 text-sm font-semibold text-gray-600 dark:text-slate-300">
+      <a href="#" class="hover:text-forest dark:hover:text-emerald-400 transition-colors hidden sm:block">For Candidates</a>
+      <a href="#" class="hover:text-forest dark:hover:text-emerald-400 transition-colors hidden sm:block">For Institutions</a>
+      
+      <!-- Sound Toggle Button -->
+      <button id="btn-sound-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-600 dark:text-gray-300 relative group" aria-label="Toggle Sound">
+        <svg id="sound-icon-on" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <svg id="sound-icon-off" class="w-5 h-5 text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-0.5 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Audio FX</span>
+      </button>
+
+      <!-- Theme Toggle Button -->
+      <button id="btn-theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-600 dark:text-gray-300" aria-label="Toggle Dark Mode">
+        <svg id="theme-icon-dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        <svg id="theme-icon-light" class="w-5 h-5 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+      </button>
+
+      <div class="flex gap-2 sm:gap-3">
+        <button id="btn-nav-preplab" class="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-sm">
+          <span>💻</span> <span class="hidden md:inline">PrepLab IDE</span>
+        </button>
+        <button id="btn-nav-admin" class="px-3 sm:px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-md hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors text-xs sm:text-sm text-forest dark:text-slate-200">Admin</button>
+        <button id="btn-nav-student" class="px-3 sm:px-4 py-2 bg-forest dark:bg-emerald-600 text-white rounded-md hover:bg-forest-lt dark:hover:bg-emerald-500 transition-colors text-xs sm:text-sm shadow-sm font-semibold">Student Login</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="pm-main flex-grow w-full relative">
+
+    <!-- VIEW 0: FRONTPAGE -->
+    <section id="view-home" class="flex flex-col items-center w-full animate-fade-in pb-0">
+      
+      <!-- Hero Section -->
+      <div class="w-full px-4 sm:px-6 lg:px-8 pt-32 pb-24 text-center relative overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-300 min-h-[80vh] flex flex-col justify-center">
+        <!-- Animated background blobs -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-emerald-200/50 dark:bg-emerald-900/30 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-200/50 dark:bg-blue-900/30 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-[#F4C3A8]/60 dark:bg-terracotta/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/50 dark:to-slate-900/80 z-0"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold text-sm mb-6 animate-slide-up" style="opacity: 0; animation-delay: 0.05s;">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            PrepMatrix Engine v2.0 is Live
+          </div>
+          <h1 class="text-5xl md:text-7xl font-bold text-forest dark:text-white mb-6 font-display animate-slide-up" style="opacity: 0; animation-delay: 0.1s;">
+            Prepare for the<br/>
+            <span class="text-emerald-600 dark:text-emerald-400">Sustainable Era</span>
+          </h1>
+          <p class="text-xl text-gray-600 dark:text-slate-400 max-w-3xl mx-auto mb-10 animate-slide-up" style="opacity: 0; animation-delay: 0.2s;">
+            PrepMatrix is an intelligent interview preparation and resource orchestration platform. 
+            We bridge the gap between candidate readiness and institutional sustainability.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="opacity: 0; animation-delay: 0.3s;">
+            <button class="px-8 py-4 bg-forest dark:bg-emerald-600 text-white rounded-full font-bold hover:bg-forest-lt dark:hover:bg-emerald-500 hover:shadow-lg hover:-translate-y-1 transition-all" onclick="document.getElementById('btn-nav-student').click()">Start Assessment</button>
+            <button class="px-8 py-4 bg-white dark:bg-slate-800 text-forest dark:text-slate-200 border border-gray-300 dark:border-slate-700 rounded-full font-bold hover:bg-gray-50 dark:hover:bg-slate-700 hover:shadow-sm transition-all">Explore Platform</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SDG Section -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 bg-sage dark:bg-slate-950 transition-colors">
+        <div class="text-center mb-16">
+          <h2 class="text-sm font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-400 mb-2">Global Impact</h2>
+          <h3 class="text-3xl font-bold text-forest dark:text-white font-display">Aligned with UN Sustainable Development Goals</h3>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#4C9F38]/10 dark:bg-[#4C9F38]/20 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-125"></div>
+            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="w-16 h-16 mb-6 rounded-md shadow-sm relative z-10 transform group-hover:scale-105 transition-transform">
+            <h4 class="text-xl font-bold text-forest dark:text-white mb-3 relative z-10">Cognitive Stress Sentinel</h4>
+            <p class="text-gray-600 dark:text-slate-400 relative z-10 leading-relaxed">Monitors performance variance to prevent burnout and ensure candidate well-being during intensive preparation phases.</p>
+          </div>
+          
+          <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#C5192D]/10 dark:bg-[#C5192D]/20 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-125"></div>
+            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="w-16 h-16 mb-6 rounded-md shadow-sm relative z-10 transform group-hover:scale-105 transition-transform">
+            <h4 class="text-xl font-bold text-forest dark:text-white mb-3 relative z-10">Skill Readiness Matrix</h4>
+            <p class="text-gray-600 dark:text-slate-400 relative z-10 leading-relaxed">Provides equitable, personalized learning paths by identifying exact skill gaps against industry benchmarks.</p>
+          </div>
+          
+          <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#FD9D24]/10 dark:bg-[#FD9D24]/20 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-125"></div>
+            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11" class="w-16 h-16 mb-6 rounded-md shadow-sm relative z-10 transform group-hover:scale-105 transition-transform">
+            <h4 class="text-xl font-bold text-forest dark:text-white mb-3 relative z-10">Resource Orchestration</h4>
+            <p class="text-gray-600 dark:text-slate-400 relative z-10 leading-relaxed">Optimizes physical campus space allocation to minimize energy footprint during large-scale mock interview events.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quotes Section -->
+      <div class="w-full bg-white dark:bg-slate-900 py-24 relative overflow-hidden transition-colors border-t border-gray-100 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="text-center mb-16">
+            <h2 class="text-sm font-bold tracking-widest uppercase text-terracotta dark:text-terracotta mb-2">Voices of the Future</h2>
+            <h3 class="text-3xl font-bold text-forest dark:text-white font-display">What Industry Leaders Say</h3>
+          </div>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-sage dark:bg-slate-950 p-10 rounded-3xl relative hover:shadow-md transition-shadow">
+              <svg class="absolute top-8 right-8 w-16 h-16 text-emerald-500/10 dark:text-emerald-500/10" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+              <p class="text-gray-700 dark:text-slate-300 text-lg italic relative z-10 mb-8 leading-relaxed">"PrepMatrix completely reimagines how we align candidate skills with corporate expectations. By integrating cognitive load monitoring, they ensure we get talent that is both capable and resilient."</p>
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/50 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-2xl shadow-inner">S</div>
+                <div>
+                  <h4 class="font-bold text-forest dark:text-white text-lg">Sarah Jenkins</h4>
+                  <p class="text-sm text-gray-500 dark:text-slate-500 font-medium">VP of Engineering, InnovateCorp</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-sage dark:bg-slate-950 p-10 rounded-3xl relative hover:shadow-md transition-shadow">
+              <svg class="absolute top-8 right-8 w-16 h-16 text-blue-500/10 dark:text-blue-500/10" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+              <p class="text-gray-700 dark:text-slate-300 text-lg italic relative z-10 mb-8 leading-relaxed">"The Resource Router algorithm is a game changer for our university. We've optimized our campus space for mock interviews and slashed our energy footprint significantly."</p>
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-2xl shadow-inner">M</div>
+                <div>
+                  <h4 class="font-bold text-forest dark:text-white text-lg">Dr. Marcus Vance</h4>
+                  <p class="text-sm text-gray-500 dark:text-slate-500 font-medium">Director of Placements, Tech University</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer with Credits -->
+      <footer class="w-full bg-forest dark:bg-slate-950 text-white py-16 border-t border-forest-lt/50 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+          <h2 class="text-3xl font-bold tracking-tight font-display mb-4">Prep<span class="text-emerald-400">Matrix</span></h2>
+          <p class="text-emerald-100/70 dark:text-slate-400 text-center max-w-xl mb-10 leading-relaxed text-lg">
+            Built with passion to elevate the standard of tech preparation while maintaining strict alignment with global sustainability goals.
+          </p>
+          
+          <div class="bg-forest-lt/40 dark:bg-slate-900/80 px-8 py-6 rounded-2xl border border-emerald-500/20 text-center shadow-lg transform hover:scale-105 transition-transform duration-300 backdrop-blur-sm">
+            <p class="text-sm uppercase tracking-widest text-emerald-300 font-bold mb-3 flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+              Designed & Developed By
+            </p>
+            <p class="text-2xl font-bold text-white tracking-wide">Me & My Incredible Friends</p>
+            <p class="text-sm text-emerald-200/60 mt-2 font-medium italic">Innovating the future of EdTech, together.</p>
+          </div>
+          
+          <div class="w-full h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent my-10"></div>
+          
+          <div class="flex flex-col md:flex-row justify-between items-center w-full text-sm text-emerald-100/50 dark:text-slate-500">
+            <p>&copy; 2026 PrepMatrix. All rights reserved.</p>
+            <div class="flex gap-6 mt-4 md:mt-0">
+              <a href="#" class="hover:text-emerald-400 transition-colors">Privacy Policy</a>
+              <a href="#" class="hover:text-emerald-400 transition-colors">Terms of Service</a>
+              <a href="#" class="hover:text-emerald-400 transition-colors">Contact</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </section>
+
+    <!-- VIEW 1: LOGIN STATE -->
+    <section id="view-login" class="hidden w-full h-[calc(100vh-73px)] animate-fade-in flex-row">
+      <!-- Left side: Animation / Graphics -->
+      <div class="hidden lg:flex w-[55%] bg-slate-950 relative overflow-hidden flex-col items-center justify-center p-12 shadow-inner">
+        <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 75% 30%, rgba(16,185,129,0.3) 0%, transparent 50%);"></div>
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 80%, rgba(27,74,138,0.3) 0%, transparent 60%);"></div>
+        
+        <canvas id="ds-canvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+        <div class="relative z-10 text-left w-full max-w-lg mt-auto pb-16">
+          <div class="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
+             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+             <span class="text-xs font-bold text-emerald-300 tracking-wider">SYSTEM OPTIMIZED</span>
+          </div>
+          <h2 class="text-5xl font-bold text-white mb-6 leading-tight">Enter the<br/><span class="text-emerald-400 font-display">Matrix</span></h2>
+          <p class="text-slate-300 text-lg mb-8 leading-relaxed max-w-md">Experience sustainable, data-driven interview preparation orchestrated by our intelligent alignment engines.</p>
+          <a href="#" class="text-white font-semibold flex items-center gap-2 group hover:text-emerald-400 transition-colors" id="btn-back-home">
+            <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Return to Frontpage
+          </a>
+        </div>
+      </div>
+      
+      <!-- Right side: Login Form -->
+      <div class="w-full lg:w-[45%] bg-white dark:bg-slate-900 flex flex-col justify-center items-center p-8 lg:p-24 overflow-y-auto transition-colors duration-300">
+        <div class="w-full max-w-md">
+          <h2 class="text-3xl font-bold text-forest dark:text-white mb-2">Welcome back!</h2>
+          <h3 id="login-heading" class="text-2xl font-bold text-forest dark:text-white mb-2">Login to your account</h3>
+          <p class="text-gray-500 dark:text-slate-400 mb-8 text-sm">It's nice to see you again. Ready to code?</p>
+          
+          <form id="form-login" class="space-y-4" onsubmit="event.preventDefault();">
+            <div class="space-y-1">
+              <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Email address" value="student@university.edu" />
+            </div>
+            
+            <div class="space-y-1">
+              <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 dark:border-slate-700 bg-[#F4F6F8] dark:bg-slate-800 rounded-md focus:border-forest dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all text-forest dark:text-white font-medium" placeholder="Password" value="password123" />
+            </div>
+            
+            <div class="flex items-center justify-between mt-4 mb-6">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-[#1A8D44] focus:ring-[#1A8D44] accent-[#1A8D44]" checked>
+                <span class="text-sm text-gray-600 dark:text-slate-400">Remember me</span>
+              </label>
+              <a href="#" class="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">Forgot password?</a>
+            </div>
+
+            <button id="btn-login" type="button" class="w-full py-3 bg-[#1A8D44] dark:bg-emerald-600 text-white font-bold rounded-md shadow hover:bg-[#157036] dark:hover:bg-emerald-500 transition-all flex items-center justify-center gap-2">
+              Log In
+            </button>
+            
+            <div class="relative flex items-center py-5">
+              <div class="flex-grow border-t border-gray-200 dark:border-slate-700"></div>
+              <span class="flex-shrink-0 mx-4 text-gray-400 dark:text-slate-500 text-sm">or</span>
+              <div class="flex-grow border-t border-gray-200 dark:border-slate-700"></div>
+            </div>
+            
+            <button type="button" class="w-full py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold rounded-md hover:bg-gray-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-3 mb-4">
+              <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Continue with Google
+            </button>
+            <button type="button" class="w-full py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold rounded-md hover:bg-gray-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              GitHub
+            </button>
+            
+            <p class="text-center text-sm text-gray-500 dark:text-slate-500 mt-8">Don't have an account? <a href="#" class="text-emerald-600 dark:text-emerald-400 hover:underline">Sign up</a></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: ONBOARDING STATE -->
+    <section id="view-onboarding" class="hidden flex-col items-center justify-center min-h-[60vh] max-w-5xl mx-auto animate-fade-in py-12 px-4 sm:px-6 lg:px-8">
+      <div class="w-full text-center mb-10">
+        <h2 class="text-4xl font-bold text-forest dark:text-white mb-3 font-display">Configure Your Path</h2>
+        <p class="text-gray-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">Self-assess your current skills and select your target placement to generate a customized learning matrix.</p>
+      </div>
+      
+      <div class="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white dark:border-slate-800 p-8 lg:p-12 relative overflow-hidden transition-colors">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-forest dark:from-emerald-700 to-emerald-400"></div>
+        <div class="grid md:grid-cols-2 gap-12 lg:gap-16">
+          
+          <div class="space-y-8">
+            <h3 class="text-xl font-bold text-forest dark:text-white border-b border-gray-100 dark:border-slate-800 pb-4 flex items-center gap-2">
+              <span class="bg-forest/10 dark:bg-emerald-500/20 text-forest dark:text-emerald-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+              Skill Self-Assessment
+            </h3>
+            
+            <div class="space-y-7">
+              <div class="group">
+                <div class="flex justify-between items-end mb-2">
+                  <label class="font-semibold text-gray-700 dark:text-slate-300">Core Logic</label>
+                  <span id="val-logic" class="font-mono font-bold text-forest dark:text-emerald-400 bg-forest/5 dark:bg-emerald-500/10 px-2 py-1 rounded text-sm">50%</span>
+                </div>
+                <input type="range" id="slider-logic" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-forest dark:accent-emerald-500 transition-all group-hover:bg-gray-300 dark:group-hover:bg-slate-600">
+              </div>
+              <div class="group">
+                <div class="flex justify-between items-end mb-2">
+                  <label class="font-semibold text-gray-700 dark:text-slate-300">Data Structures</label>
+                  <span id="val-ds" class="font-mono font-bold text-forest dark:text-emerald-400 bg-forest/5 dark:bg-emerald-500/10 px-2 py-1 rounded text-sm">50%</span>
+                </div>
+                <input type="range" id="slider-ds" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-forest dark:accent-emerald-500 transition-all group-hover:bg-gray-300 dark:group-hover:bg-slate-600">
+              </div>
+              <div class="group">
+                <div class="flex justify-between items-end mb-2">
+                  <label class="font-semibold text-gray-700 dark:text-slate-300">Algorithms</label>
+                  <span id="val-algo" class="font-mono font-bold text-forest dark:text-emerald-400 bg-forest/5 dark:bg-emerald-500/10 px-2 py-1 rounded text-sm">50%</span>
+                </div>
+                <input type="range" id="slider-algo" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-forest dark:accent-emerald-500 transition-all group-hover:bg-gray-300 dark:group-hover:bg-slate-600">
+              </div>
+              <div class="group">
+                <div class="flex justify-between items-end mb-2">
+                  <label class="font-semibold text-gray-700 dark:text-slate-300">System Design</label>
+                  <span id="val-sys" class="font-mono font-bold text-forest dark:text-emerald-400 bg-forest/5 dark:bg-emerald-500/10 px-2 py-1 rounded text-sm">50%</span>
+                </div>
+                <input type="range" id="slider-sys" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-forest dark:accent-emerald-500 transition-all group-hover:bg-gray-300 dark:group-hover:bg-slate-600">
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-8 flex flex-col justify-between">
+            <div>
+              <h3 class="text-xl font-bold text-forest dark:text-white border-b border-gray-100 dark:border-slate-800 pb-4 flex items-center gap-2 mb-6">
+                <span class="bg-forest/10 dark:bg-emerald-500/20 text-forest dark:text-emerald-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                Target Placement
+              </h3>
+              <p class="text-sm text-gray-500 dark:text-slate-400 mb-6 leading-relaxed">Select your target placement. The platform will dynamically tailor your learning path and readiness matrix to this company's standards.</p>
+              
+              <div class="relative group">
+                <select id="select-company" class="w-full appearance-none bg-gray-50 dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 text-gray-800 dark:text-white py-4 px-5 pr-10 rounded-xl leading-tight focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-forest dark:focus:border-emerald-500 transition-all font-semibold text-lg cursor-pointer">
+                  <option value="" disabled selected>Select Company Target...</option>
+                  <option value="Google">Google (Distributed Systems & Hard Algos)</option>
+                  <option value="Amazon">Amazon (Leadership Principles & Scalability)</option>
+                  <option value="Microsoft">Microsoft (Data Structures & Clean Architecture)</option>
+                  <option value="Zoho">Zoho (Strict Core Logic & Low-Level Problem Solving)</option>
+                  <option value="Zapro">Zapro (Full-Stack & Cloud Architecture)</option>
+                  <option value="TCS">TCS (Foundational SDE & Core Aptitude)</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-gray-400 group-hover:text-forest dark:group-hover:text-emerald-400 transition-colors">
+                  <svg class="fill-current h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-complete-onboard" type="button" class="w-full py-5 bg-forest dark:bg-emerald-600 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-forest-lt dark:hover:bg-emerald-500 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-3" disabled>
+              Generate Custom Learning Path
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </button>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: ASSESSMENT ENGINE -->
+    <section id="view-assessment" class="hidden w-full min-h-[calc(100vh-73px)] flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors">
+
+      <!-- Assessment Header Bar (shown during question phase) -->
+      <div id="assess-header" class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-4 py-3 flex items-center gap-4 sticky top-[73px] z-30 shadow-sm">
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <span id="hdr-round-icon" class="text-xl">📝</span>
+          <span id="hdr-round-label" class="font-bold text-forest dark:text-white text-sm hidden sm:block">Round</span>
+          <span id="hdr-q-num" class="text-xs text-slate-500 dark:text-slate-400">Q1 of 10</span>
+        </div>
+        <!-- Overall progress bar -->
+        <div class="flex-1 flex items-center gap-2">
+          <div class="flex-1 h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="hdr-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500" style="width:0%"></div>
+          </div>
+          <span id="hdr-progress-pct" class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">0%</span>
+        </div>
+        <!-- XP and Streak -->
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-200 dark:border-amber-700">
+            <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            <span id="hdr-xp" class="text-xs font-bold text-amber-600 dark:text-amber-400">0</span>
+            <span class="text-xs text-amber-500">XP</span>
+          </div>
+          <div class="hidden sm:flex items-center gap-1 text-sm font-bold text-orange-500" id="hdr-streak">—</div>
+        </div>
+      </div>
+
+      <!-- PHASE: LOBBY -->
+      <div id="assess-lobby" class="flex-1 flex flex-col items-center justify-center px-4 py-12 max-w-3xl mx-auto w-full">
+        <div class="text-center mb-10 animate-slide-up" style="opacity:0; animation-delay:0.05s;">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm font-bold mb-6">
+            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+            PrepMatrix Assessment Engine
+          </div>
+          <h2 class="text-4xl font-bold text-forest dark:text-white mb-3 font-display">Your Placement <span class="text-emerald-500">Readiness Test</span></h2>
+          <p class="text-gray-500 dark:text-slate-400 text-lg max-w-xl">Four comprehensive rounds modelled after real placement drives. Your scores auto-calculate your skill matrix.</p>
+        </div>
+
+        <!-- Round Cards -->
+        <div id="lobby-rounds" class="w-full space-y-3 mb-8"></div>
+
+        <div class="w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-5 mb-8 flex items-start gap-3">
+          <span class="text-2xl flex-shrink-0">⚡</span>
+          <div>
+            <h4 class="font-bold text-amber-700 dark:text-amber-300 mb-1">Gamification Rules</h4>
+            <ul class="text-sm text-amber-600 dark:text-amber-400 space-y-1">
+              <li>• Answer correctly to earn XP. Streak bonuses stack up to 5x!</li>
+              <li>• Each question has a countdown timer — speed earns bragging rights.</li>
+              <li>• Your final scores feed directly into your SDG 4 Readiness Dashboard.</li>
+            </ul>
+          </div>
+        </div>
+
+        <button id="btn-start-assessment" class="w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-forest to-emerald-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3 mx-auto">
+          🚀 Begin Assessment
+        </button>
+      </div>
+
+      <!-- PHASE: QUESTION -->
+      <div id="assess-question" class="hidden flex-1 flex flex-col">
+        <!-- Streak Banner -->
+        <div id="streak-banner" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-full shadow-2xl flex items-center gap-2 animate-scale-in">
+          🔥 <span id="streak-count-display">2</span>x Streak! Bonus XP!
+        </div>
+
+        <div class="flex-1 max-w-4xl mx-auto w-full px-4 py-8 flex flex-col gap-6">
+          <!-- Timer + Question Card -->
+          <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-gray-100 dark:border-slate-700 p-6 sm:p-8">
+            <!-- Top row: tags + timer -->
+            <div class="flex items-start justify-between mb-6 gap-4">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="q-round-tag" class="text-xs font-bold px-3 py-1 rounded-full bg-gray-200 text-gray-700">Round</span>
+                <span id="q-diff-tag" class="text-xs font-bold px-3 py-1 rounded-full bg-gray-100 text-gray-600">EASY</span>
+              </div>
+              <!-- SVG Timer Circle -->
+              <div class="relative flex-shrink-0 w-16 h-16">
+                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="28" fill="none" stroke="#E2E8F0" stroke-width="4" class="dark:stroke-slate-700"/>
+                  <circle id="timer-arc" cx="32" cy="32" r="28" fill="none" stroke="#10B981" stroke-width="4" stroke-linecap="round" style="stroke-dasharray: 175.9; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.5s;"/>
+                </svg>
+                <span id="timer-text" class="absolute inset-0 flex items-center justify-center text-lg font-bold text-emerald-500">60</span>
+              </div>
+            </div>
+
+            <!-- Question text -->
+            <p id="q-text" class="text-lg font-semibold text-slate-800 dark:text-slate-100 leading-relaxed mb-4"></p>
+
+            <!-- Code block -->
+            <div id="q-code" class="hidden mb-5">
+              <div class="bg-slate-950 rounded-xl p-5 border border-slate-700 overflow-x-auto">
+                <pre class="text-sm font-mono text-slate-100"><code id="q-code-content"></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Options Grid -->
+          <div id="q-options-grid" class="grid sm:grid-cols-2 gap-3"></div>
+
+          <!-- Explanation -->
+          <div id="q-explanation" class="hidden bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-2xl p-5 flex items-start gap-3">
+            <span class="text-xl flex-shrink-0">💡</span>
+            <div>
+              <p class="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1 uppercase tracking-wide">Explanation</p>
+              <p id="q-expl-text" class="text-sm text-emerald-800 dark:text-emerald-200 leading-relaxed"></p>
+            </div>
+          </div>
+
+          <!-- Next button -->
+          <button id="btn-assess-next" class="hidden w-full py-4 bg-forest dark:bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-forest-lt dark:hover:bg-emerald-500 hover:-translate-y-0.5 transition-all text-base flex items-center justify-center gap-2">
+            Next Question →
+          </button>
+        </div>
+      </div>
+
+      <!-- PHASE: ROUND SUMMARY -->
+      <div id="assess-round-summary" class="hidden flex-1 flex flex-col items-center justify-start px-4 py-10 max-w-3xl mx-auto w-full">
+        <div class="text-center mb-8 w-full">
+          <div id="rs-icon" class="text-6xl mb-4">🎉</div>
+          <h2 id="rs-title" class="text-3xl font-bold text-forest dark:text-white font-display mb-2">Round Complete!</h2>
+          <p id="rs-xp" class="text-emerald-600 dark:text-emerald-400 font-bold text-lg mb-1">+0 XP earned</p>
+          <div class="inline-flex items-center gap-3 mt-2">
+            <span class="text-5xl font-bold text-forest dark:text-white font-display" id="rs-score">0%</span>
+            <span class="text-slate-400 text-lg" id="rs-correct">0 / 0 correct</span>
+          </div>
+          <p id="rs-feedback" class="mt-4 text-gray-600 dark:text-slate-400 max-w-md mx-auto"></p>
+        </div>
+
+        <!-- Question review list -->
+        <div class="w-full mb-8">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">Question Review</h3>
+          <div id="rs-question-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+        </div>
+
+        <button id="btn-next-round" class="w-full py-4 bg-forest dark:bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-base">
+          Next Round →
+        </button>
+      </div>
+
+      <!-- PHASE: FINAL SUMMARY -->
+      <div id="assess-final" class="hidden flex-1 flex flex-col items-center px-4 py-10 max-w-4xl mx-auto w-full">
+        <!-- Grade -->
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-sm font-bold mb-6">🏆 Assessment Complete!</div>
+          <div id="final-grade" class="text-8xl font-bold font-display text-forest dark:text-white mb-2">A</div>
+          <p id="final-pct" class="text-4xl font-bold text-slate-600 dark:text-slate-300 mb-4">0%</p>
+          <div class="flex items-center justify-center gap-6 text-sm">
+            <div class="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-200 dark:border-amber-700">
+              <span class="text-amber-500">⭐</span>
+              <span id="final-xp" class="font-bold text-amber-600 dark:text-amber-400">0 XP</span>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 bg-orange-50 dark:bg-orange-900/20 rounded-full border border-orange-200 dark:border-orange-700">
+              <span id="final-streak" class="font-bold text-orange-600 dark:text-orange-400">🔥 0</span>
+              <span class="text-orange-500 text-xs">Max Streak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Round Breakdown -->
+        <div class="w-full mb-8">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Round Scores</h3>
+          <div id="final-rounds-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+        </div>
+
+        <!-- Skill Scores → Dashboard -->
+        <div class="w-full bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm mb-8">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-1">Computed Skill Matrix</h3>
+          <p class="text-xs text-slate-400 mb-5">These scores are auto-calculated from your answers and fed into your SDG 4 Dashboard.</p>
+          <div id="final-skills-list" class="space-y-4"></div>
+        </div>
+
+        <button id="btn-go-dashboard" class="w-full py-5 bg-gradient-to-r from-forest to-emerald-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
+          ⚡ View My Readiness Dashboard
+        </button>
+      </div>
+
+    </section>
+
+    <!-- VIEW 4: STUDENT DASHBOARD STATE -->
+    <section id="view-dashboard" class="hidden animate-fade-in w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+        <div>
+          <p class="pm-section-label !mb-1 text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase">Live Optimization Dashboard</p>
+          <h2 class="text-3xl font-bold text-forest dark:text-white font-display">Path to <span id="dash-company-name" class="text-terracotta relative inline-block">Company<span class="absolute bottom-0 left-0 w-full h-1 bg-terracotta/30 rounded-full"></span></span></h2>
+        </div>
+        
+        <!-- Student Quick Actions Toolbar -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button id="btn-open-preplab" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-sm text-xs font-bold transition-all flex items-center gap-1.5 hover:-translate-y-0.5">
+            <span>💻</span> PrepLab IDE
+          </button>
+          <button id="btn-open-wellness" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white rounded-xl shadow-sm text-xs font-bold transition-all flex items-center gap-1.5 hover:-translate-y-0.5">
+            <span>🧘</span> Mindful Bio-Break
+          </button>
+          <button id="btn-open-certificate" class="px-4 py-2 bg-forest dark:bg-slate-800 hover:bg-forest-lt dark:hover:bg-slate-700 text-white border border-emerald-500/30 rounded-xl shadow-sm text-xs font-bold transition-all flex items-center gap-1.5 hover:-translate-y-0.5">
+            <span>📜</span> Export Certificate
+          </button>
+        </div>
+      </div>
+
+      <div class="pm-dashboard">
+        
+        <article id="ui-sdg4-card" class="pm-card pm-card--sdg4" aria-labelledby="sdg4-title">
+          <div class="pm-card__header">
+            <div>
+              <span class="pm-card__sdg-badge">SDG 4</span>
+              <h2 id="sdg4-title" class="pm-card__title mt-2">Skill Readiness Matrix</h2>
+              <p class="pm-card__subtitle">Quality Education — Gap Analysis</p>
+            </div>
+            <svg class="w-8 h-8 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+            </svg>
+          </div>
+          <div class="pm-metric pm-metric--forest" aria-live="polite">
+            <span id="ui-sdg4-score">—</span><span class="pm-metric__unit">%</span>
+          </div>
+          <p class="text-xs text-gray-400 dark:text-slate-500 mb-1">Overall Readiness Score</p>
+          <div id="ui-sdg4-list" class="pm-gap-list" aria-label="Per-skill gap breakdown"></div>
+        </article>
+
+        <article id="ui-sdg11-card" class="pm-card pm-card--sdg11" aria-labelledby="sdg11-title">
+          <div class="pm-card__header">
+            <div>
+              <span class="pm-card__sdg-badge">SDG 11</span>
+              <h2 id="sdg11-title" class="pm-card__title mt-2">Campus Resource Router</h2>
+              <p class="pm-card__subtitle">Sustainable Cities — Energy Efficiency</p>
+            </div>
+            <svg class="w-8 h-8 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <div class="pm-metric pm-metric--blue" aria-live="polite">
+            <span id="ui-sdg11-energy">—</span><span class="pm-metric__unit">kWh</span>
+          </div>
+          <p class="text-xs text-gray-400 dark:text-slate-500 mb-1">Energy Conserved This Session</p>
+          <div id="ui-sdg11-grid" class="pm-room-grid" aria-label="Room allocation grid"></div>
+          
+          <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700/60 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
+            <span>🌱 CO₂ Avoided: <strong id="ui-sdg11-co2" class="text-emerald-600 dark:text-emerald-400 font-bold">14.8 kg</strong></span>
+            <span>⚡ Cost Saved: <strong id="ui-sdg11-cost" class="text-blue-600 dark:text-blue-400 font-bold">₹153</strong></span>
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2 italic text-center">💡 Click any room to inspect occupancy & toggle HVAC hibernation</p>
+          
+          <div id="ui-sdg11-spillover" class="pm-spillover-alert" role="alert" aria-live="assertive"></div>
+        </article>
+
+        <article id="ui-sdg3-card" class="pm-card pm-card--sdg3" aria-labelledby="sdg3-title">
+          <div class="pm-card__header">
+            <div>
+              <span class="pm-card__sdg-badge">SDG 3</span>
+              <h2 id="sdg3-title" class="pm-card__title mt-2">Cognitive Stress Sentinel</h2>
+              <p class="pm-card__subtitle">Good Health — Fatigue Detection</p>
+            </div>
+            <svg class="w-8 h-8 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+          <div class="pm-metric pm-metric--terracotta" aria-live="polite">
+            <span id="ui-sdg3-index">—</span>
+          </div>
+          <p class="text-xs text-gray-400 dark:text-slate-500 mb-3">Fatigue Index (threshold: 100)</p>
+          <div class="pm-fatigue-label">
+            <span>Cognitive Load</span>
+            <span id="ui-sdg3-pct">0%</span>
+          </div>
+          <div class="pm-fatigue-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="150" aria-label="Fatigue index progress bar">
+            <div id="ui-sdg3-bar"></div>
+          </div>
+          <p class="pm-fatigue-threshold mt-2">⚠ Lockout triggers above index 100</p>
+          
+          <button id="btn-trigger-wellness" class="w-full mt-3 py-2 px-3 bg-terracotta/10 hover:bg-terracotta/20 text-terracotta text-xs font-bold rounded-lg border border-terracotta/20 transition-all flex items-center justify-center gap-1.5">
+            🧘 Take 60s Guided Bio-Break
+          </button>
+        </article>
+
+      </div>
+
+      <!-- PERSONALIZED 7-DAY SPRINT ACTION PLAN (SDG 4) -->
+      <div class="mt-8 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800 shadow-sm transition-colors">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
+              SDG 4: Quality Education
+            </div>
+            <h3 class="text-2xl font-bold text-forest dark:text-white font-display">Personalized 7-Day Placement Sprint</h3>
+            <p class="text-sm text-gray-500 dark:text-slate-400">Dynamic daily roadmap generated to eliminate your specific skill gaps before interview day.</p>
+          </div>
+          <div class="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 px-5 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-800/40">
+            <div class="text-right">
+              <span class="text-xs text-gray-400 font-medium">Sprint Progress</span>
+              <p id="sprint-progress-text" class="text-base font-bold text-emerald-600 dark:text-emerald-400">0 / 7 Days</p>
+            </div>
+            <div class="w-12 h-12 rounded-full border-4 border-emerald-500/20 flex items-center justify-center relative">
+              <span id="sprint-pct" class="text-xs font-bold text-forest dark:text-white">0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="sprint-days-container" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <!-- Dynamic 7 Day Cards injected via RoadmapEngine -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ADMIN DASHBOARD -->
+    <section id="view-admin" class="hidden animate-fade-in w-full">
+      <!-- Admin Top Bar -->
+      <div class="bg-slate-900 dark:bg-slate-950 border-b border-slate-700 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-terracotta/20 border border-terracotta/30 flex items-center justify-center">
+            <svg class="w-5 h-5 text-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+          </div>
+          <div>
+            <h2 class="text-white font-bold text-lg font-display">Institution Command Centre</h2>
+            <p class="text-slate-400 text-xs">Administrator Access · Real-time Cohort Analytics</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-sm text-slate-400">
+            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+            Live · Refreshes every 30s
+          </div>
+          <button id="btn-admin-refresh" class="px-4 py-2 bg-terracotta/20 hover:bg-terracotta/30 text-terracotta border border-terracotta/30 rounded-lg text-sm font-bold transition-colors">↻ Refresh</button>
+        </div>
+      </div>
+
+      <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- KPI Row -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">Total Students</p>
+            <p id="adm-total" class="text-4xl font-bold text-forest dark:text-white font-display">—</p>
+            <p class="text-xs text-slate-400 mt-1">in simulation cohort</p>
+          </div>
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">Active Now</p>
+            <p id="adm-active" class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 font-display">—</p>
+            <p class="text-xs text-slate-400 mt-1">currently in session</p>
+          </div>
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">Avg Readiness</p>
+            <p id="adm-readiness" class="text-4xl font-bold text-blue-600 dark:text-blue-400 font-display">—<span class="text-xl">%</span></p>
+            <p class="text-xs text-slate-400 mt-1">across all cohorts</p>
+          </div>
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+            <div id="adm-atrisk-glow" class="absolute inset-0 bg-red-500/5 dark:bg-red-500/10 hidden"></div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">At-Risk Students</p>
+            <p id="adm-atrisk" class="text-4xl font-bold text-terracotta font-display relative z-10">—</p>
+            <p class="text-xs text-slate-400 mt-1 relative z-10">fatigue index ≥ 100</p>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid lg:grid-cols-3 gap-6">
+
+          <!-- Campus Heat Map (SDG 11) - spans 2 cols -->
+          <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <span class="text-xs font-bold px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full">SDG 11</span>
+                <h3 class="text-lg font-bold text-forest dark:text-white mt-2">Campus Room Heat Map</h3>
+                <p class="text-xs text-slate-400">Active occupancy · Energy optimization</p>
+              </div>
+              <div class="text-right">
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400 font-display"><span id="adm-energy">—</span> <span class="text-sm font-normal">kWh</span></p>
+                <p class="text-xs text-slate-400">energy saved</p>
+              </div>
+            </div>
+            <!-- Room grid - 4x5 = 20 rooms -->
+            <div id="adm-room-heatmap" class="grid grid-cols-5 gap-3"></div>
+            <div class="mt-4 flex items-center gap-6 text-xs text-slate-500">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> High Occupancy</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span> Medium</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-200 dark:bg-slate-700 inline-block"></span> Hibernating</span>
+            </div>
+          </div>
+
+          <!-- Energy Saved Stat + Company breakdown -->
+          <div class="space-y-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm">
+              <span class="text-xs font-bold px-2 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full">SDG 4</span>
+              <h3 class="text-lg font-bold text-forest dark:text-white mt-2 mb-4">Readiness by Company</h3>
+              <div id="adm-company-bars" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Department breakdown + At-Risk Alerts -->
+        <div class="grid lg:grid-cols-2 gap-6">
+
+          <!-- Department Breakdown (SDG 4) -->
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm">
+            <div class="flex items-center gap-2 mb-5">
+              <span class="text-xs font-bold px-2 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-full">SDG 4</span>
+              <h3 class="text-lg font-bold text-forest dark:text-white">Department Readiness Matrix</h3>
+            </div>
+            <div id="adm-dept-table" class="space-y-2"></div>
+          </div>
+
+          <!-- At-Risk Fatigue Alerts (SDG 3) -->
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-40 h-40 bg-terracotta/5 rounded-bl-full -mr-10 -mt-10"></div>
+            <div class="flex items-center gap-2 mb-5 relative z-10">
+              <span class="text-xs font-bold px-2 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded-full">SDG 3</span>
+              <h3 class="text-lg font-bold text-forest dark:text-white">Fatigue Alert Board</h3>
+            </div>
+            <p class="text-xs text-slate-400 mb-4 relative z-10">Students whose cognitive fatigue index ≥ 100. Intervention recommended.</p>
+            <div id="adm-atrisk-list" class="space-y-2 relative z-10 max-h-72 overflow-y-auto"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="ui-lockout-modal" class="hidden fixed inset-0 z-[9999] backdrop-blur-xl bg-slate-900/90 flex items-center justify-center transition-all" role="alertdialog" aria-modal="true" aria-labelledby="lockout-title" aria-describedby="lockout-desc">
+    <div class="pm-lockout-card animate-scale-in">
+      <div class="pm-lockout-card__icon" aria-hidden="true">🧠</div>
+      <h2 id="lockout-title" class="pm-lockout-card__title">SYSTEM LOCKED</h2>
+      <p id="lockout-desc" class="pm-lockout-card__body">
+        Cognitive Fatigue Threshold Breached.<br />
+        Performance degradation has been detected. Rest is mandatory before continuing.
+      </p>
+      <span id="lockout-fatigue-display" class="pm-lockout-card__index">—</span>
+      <span class="pm-lockout-card__index-label">Fatigue Index</span>
+      <div class="pm-lockout-stripe" aria-hidden="true"></div>
+      
+      <button id="btn-lockout-recovery" class="mt-6 w-full py-3 bg-gradient-to-r from-amber-500 to-emerald-500 hover:from-amber-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+        🧘 Begin Guided Bio-Break to Unlock
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 1: PREPLAB LIVE CODE IDE -->
+  <div id="modal-preplab" class="hidden fixed inset-0 z-50 backdrop-blur-md bg-slate-900/80 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh] animate-scale-in">
+      <div class="px-6 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-white">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold">💻</div>
+          <div>
+            <h3 class="font-bold text-base font-display">PrepLab Live Sandbox</h3>
+            <p class="text-xs text-slate-400">In-Browser JavaScript Compiler & Test Suite</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <select id="preplab-challenge-select" class="bg-slate-800 text-xs text-white border border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500">
+            <option value="twoSum">Two Sum (Hash Map O(n))</option>
+            <option value="reverseLinkedList">Reverse Array (Two Pointers)</option>
+            <option value="validParentheses">Valid Parentheses (Stack)</option>
+          </select>
+          <button id="btn-close-preplab" class="text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+        </div>
+      </div>
+      
+      <div class="p-6 overflow-y-auto space-y-4 flex-1">
+        <!-- Problem Description -->
+        <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-gray-200 dark:border-slate-700/60">
+          <div class="flex items-center justify-between mb-1">
+            <h4 id="preplab-title" class="font-bold text-forest dark:text-white text-sm">Two Sum Optimal (O(n))</h4>
+            <span id="preplab-diff" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">EASY</span>
+          </div>
+          <p id="preplab-desc" class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed"></p>
+        </div>
+
+        <!-- Code Editor Area -->
+        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
+          <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex justify-between items-center text-xs text-slate-400">
+            <span class="font-mono">solution.js (ES6)</span>
+            <span class="text-emerald-400 font-mono text-[11px]">Runtime: Browser JS VM</span>
+          </div>
+          <textarea id="preplab-editor" rows="10" spellcheck="false" class="w-full p-4 bg-transparent font-mono text-xs sm:text-sm text-emerald-300 focus:outline-none resize-none leading-relaxed" style="tab-size: 2;"></textarea>
+        </div>
+
+        <!-- Action / Run Bar -->
+        <div class="flex items-center justify-between gap-4 pt-2">
+          <span class="text-xs text-slate-400">Run code against hidden unit tests & benchmark performance.</span>
+          <button id="btn-run-code" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2 hover:-translate-y-0.5">
+            <span>▶</span> Run Test Suite
+          </button>
+        </div>
+
+        <!-- Test Case Results -->
+        <div id="preplab-results" class="hidden space-y-2 pt-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 border-b border-gray-200 dark:border-slate-800 pb-1">
+            <span>TEST SUITE OUTPUT</span>
+            <span id="preplab-speed" class="text-emerald-500 font-mono">0.00ms</span>
+          </div>
+          <div id="preplab-cases-container" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ROOM CONTROLLER & CARBON INSPECTOR -->
+  <div id="modal-room-inspector" class="hidden fixed inset-0 z-50 backdrop-blur-md bg-slate-900/80 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden animate-scale-in">
+      <div class="px-6 py-4 bg-forest dark:bg-slate-950 border-b border-forest-lt dark:border-slate-800 flex items-center justify-between text-white">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🏢</span>
+          <div>
+            <h3 id="inspector-room-name" class="font-bold text-base font-display">Lab 01</h3>
+            <p id="inspector-room-floor" class="text-xs text-emerald-200 dark:text-slate-400">Ground Floor</p>
+          </div>
+        </div>
+        <button id="btn-close-inspector" class="text-white/60 hover:text-white text-xl font-bold p-1">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
+          <div>
+            <p class="text-xs text-gray-400">Current Status</p>
+            <p id="inspector-status-badge" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm mt-0.5">Active</p>
+          </div>
+          <button id="btn-toggle-room-state" class="px-4 py-2 bg-forest dark:bg-emerald-600 hover:bg-forest-lt text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+            Toggle Hibernation
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-xl border border-gray-100 dark:border-slate-700/60">
+            <span class="text-gray-400">Occupancy</span>
+            <p id="inspector-occupancy" class="text-base font-bold text-forest dark:text-white mt-0.5">4 / 6 Candidates</p>
+          </div>
+          <div class="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-xl border border-gray-100 dark:border-slate-700/60">
+            <span class="text-gray-400">HVAC Power</span>
+            <p id="inspector-power" class="text-base font-bold text-blue-600 dark:text-blue-400 mt-0.5">2.5 kW</p>
+          </div>
+          <div class="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-xl border border-gray-100 dark:border-slate-700/60">
+            <span class="text-gray-400">Ambient Temp</span>
+            <p id="inspector-temp" class="text-base font-bold text-forest dark:text-white mt-0.5">22°C</p>
+          </div>
+          <div class="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-xl border border-gray-100 dark:border-slate-700/60">
+            <span class="text-gray-400">Air Quality</span>
+            <p id="inspector-aqi" class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Optimal (35 AQI)</p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-100 dark:border-emerald-800/40 text-xs">
+          <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold mb-1">
+            <span>🌱</span> SDG 11 Climate Impact
+          </div>
+          <p class="text-emerald-600 dark:text-emerald-400/90 leading-relaxed">
+            Automated hibernation slashes parasitic standby load by 92%, saving ~2.3 kWh per room/hr and preventing direct carbon emissions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: GUIDED MINDFUL BIO-BREAK (SDG 3) -->
+  <div id="modal-wellness" class="hidden fixed inset-0 z-50 backdrop-blur-xl bg-slate-950/90 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-8 shadow-2xl text-center text-white relative animate-scale-in flex flex-col items-center">
+      <button id="btn-close-wellness" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-6">
+        <span>🧘</span> Cognitive De-escalation Protocol
+      </div>
+
+      <!-- Breathing Orb Visualizer -->
+      <div class="relative w-48 h-48 my-6 flex items-center justify-center">
+        <div id="wellness-orb" class="w-32 h-32 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-300 opacity-80 blur-md absolute animate-breathing"></div>
+        <div class="relative z-10 text-center">
+          <p id="wellness-instruction" class="text-xl font-bold text-white tracking-wide">Inhale...</p>
+          <span id="wellness-phase-timer" class="text-xs text-emerald-300 font-mono">4s</span>
+        </div>
+      </div>
+
+      <p class="text-slate-400 text-sm max-w-xs mb-6">Follow the 4-7-8 breathing cadence to normalize cognitive heart-rate variance and drop fatigue levels.</p>
+
+      <div class="w-full bg-slate-800/80 rounded-2xl p-4 mb-6 border border-slate-700 flex justify-between items-center text-xs">
+        <div>
+          <span class="text-slate-400">Total Duration</span>
+          <p id="wellness-time-left" class="font-bold text-base text-white font-mono mt-0.5">45s</p>
+        </div>
+        <div class="text-right">
+          <span class="text-slate-400">Fatigue Index</span>
+          <p class="font-bold text-base text-emerald-400 font-mono mt-0.5">-25 pts</p>
+        </div>
+      </div>
+
+      <button id="btn-finish-wellness" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all">
+        Complete Bio-Break & Resume
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 4: OFFICIAL CERTIFICATE & AUDIT REPORT (SDG 8 & SDG 4) -->
+  <div id="modal-certificate" class="hidden fixed inset-0 z-50 backdrop-blur-md bg-slate-900/85 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white text-slate-800 rounded-3xl w-full max-w-3xl shadow-2xl border-4 border-double border-emerald-600 p-8 sm:p-12 relative animate-scale-in my-8">
+      <button id="btn-close-certificate" class="no-print absolute top-6 right-6 text-gray-400 hover:text-slate-800 text-2xl font-bold">&times;</button>
+      
+      <!-- Certificate Header -->
+      <div class="text-center border-b-2 border-emerald-500/20 pb-8 mb-8">
+        <div class="flex items-center justify-center gap-3 mb-2">
+          <span class="text-4xl">🏛</span>
+          <h2 class="text-3xl sm:text-4xl font-bold font-display text-forest tracking-tight">Prep<span class="text-emerald-600">Matrix</span></h2>
+        </div>
+        <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold">Global Sustainable Placement Command Centre</p>
+        <p class="text-xs text-gray-400 mt-1">Accredited under UN SDG 4 (Education) & SDG 8 (Decent Work)</p>
+      </div>
+
+      <!-- Certificate Body -->
+      <div class="text-center space-y-4 mb-8">
+        <p class="text-sm uppercase tracking-wider text-gray-500 font-semibold">This is to officially verify that</p>
+        <h3 id="cert-candidate-name" class="text-3xl sm:text-4xl font-bold text-forest font-display">Simulated Candidate</h3>
+        <p class="text-sm text-gray-600 max-w-xl mx-auto leading-relaxed">
+          Has demonstrated comprehensive interview readiness benchmarked against institutional standards for
+          <strong id="cert-company-target" class="text-emerald-700 font-bold">TCS Standards</strong>.
+        </p>
+      </div>
+
+      <!-- Competency Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100 mb-8 text-center">
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Readiness</span>
+          <p id="cert-readiness" class="text-2xl font-bold text-forest font-display">85%</p>
+        </div>
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Evaluation Grade</span>
+          <p id="cert-grade" class="text-2xl font-bold text-emerald-600 font-display">Grade A</p>
+        </div>
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Cognitive Score</span>
+          <p id="cert-wellness" class="text-2xl font-bold text-blue-600 font-display">Optimal</p>
+        </div>
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Campus Impact</span>
+          <p class="text-2xl font-bold text-teal-600 font-display">Net Zero</p>
+        </div>
+      </div>
+
+      <!-- Verification Footer -->
+      <div class="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 text-xs text-gray-500 gap-4">
+        <div>
+          <p>Credential ID: <strong id="cert-hash" class="font-mono text-slate-800">PM-2026-X89F-72A</strong></p>
+          <p class="text-[11px] text-gray-400">Verified by PrepMatrix Cryptographic Engine</p>
+        </div>
+        <div class="no-print flex gap-3">
+          <button id="btn-print-certificate" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+            <span>🖨</span> Print / Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
