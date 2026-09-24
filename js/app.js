@@ -15,6 +15,7 @@ import { RoadmapEngine }      from './engines/RoadmapEngine.js';
 import { RoomController }     from './engines/RoomController.js';
 import { WellnessEngine }     from './engines/WellnessEngine.js';
 import { CodeRunnerEngine, CODING_CHALLENGES } from './engines/CodeRunnerEngine.js';
+import { StorageEngine } from './engines/StorageEngine.js';
 
 // Init animation for login view
 initCanvasAnimation('ds-canvas');
@@ -42,6 +43,7 @@ const roadmapEngine  = new RoadmapEngine();
 const roomController = new RoomController(TOTAL_ROOMS);
 const wellnessEngine = new WellnessEngine();
 const codeEngine     = new CodeRunnerEngine();
+const storageEngine  = new StorageEngine();
 
 /* ── DOM refs ───────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -241,6 +243,16 @@ window.addEventListener('assessment-complete', (e) => {
   runEnginesAndRenderWithScores(skillScores, company);
 });
 
+// On app load, attempt to restore previous session
+const savedSession = storageEngine.load();
+if (savedSession && savedSession.skillScores && savedSession.company) {
+  hideAllViews();
+  viewDashboard?.classList.remove('hidden');
+  viewDashboard?.classList.add('block');
+  if (dashCompanyName) dashCompanyName.textContent = savedSession.company;
+  runEnginesAndRenderWithScores(savedSession.skillScores, savedSession.company);
+}
+
 /* ══════════════════════════════════════════════════
    ADMIN DASHBOARD
 ══════════════════════════════════════════════════ */
@@ -425,6 +437,8 @@ function runEnginesAndRenderWithScores(skillScores, company) {
   const weights = compConfig.weights;
 
   const avgSkill = skillScores.reduce((a, b) => a + b, 0) / skillScores.length;
+  // Persist session data
+  storageEngine.save({ skillScores, company });
   const scoreHistory = [
     Math.round(avgSkill + 5), Math.round(avgSkill),
     Math.round(avgSkill - 5), Math.round(avgSkill - 20)
